@@ -12,10 +12,10 @@ using namespace std;
 
 struct vec2
 {
-	long long x, y;
-	vec2() :x(), y() {}
-	vec2(long long x, long long y) :x(x), y(y) {}
-	vec2 operator-(const vec2& v) const { return vec2(x - v.x, y - v.y); }
+    long long x, y;
+    vec2() :x(), y() {}
+    vec2(long long x, long long y) :x(x), y(y) {}
+    vec2 operator-(const vec2& v) const { return vec2(x - v.x, y - v.y); }
     bool operator==(const vec2& v) const { return this->x == v.x && this->y == v.y; }
     bool operator!=(const vec2& v) const { return !(*this==v); }
     bool operator<(const vec2& v) const { return this->y < v.y || (this->y == v.y && this->x < v.x); }
@@ -24,7 +24,7 @@ struct vec2
 
 long long ccw(const vec2& a, const vec2& b, const vec2& c)
 {
-	return (c - b) * (a - b);
+    return (c - b) * (a - b);
 }
 
 #define PVV pair<vec2, vec2>
