@@ -9,40 +9,32 @@ struct vec2
     long long x, y;
     vec2(long long x, long long y) :x(x), y(y) {}
     vec2 operator-(const vec2& v) const { return vec2(x - v.x, y - v.y); }
-    bool operator==(const vec2& v) const { return this->x == v.x && this->y == v.y; }
     bool operator<(const vec2& v) const { return this->y < v.y || (this->y == v.y && this->x < v.x); }
     long long operator*(const vec2& v) const { return x * v.y - v.x * y; }
 };
 
-long long ccw(const vec2& a, const vec2& b, const vec2& c)
+int ccw(const vec2& a, const vec2& b, const vec2& c)
 {
     long long ret = (c - b) * (a - b);
-    return ret ? (ret > 0 ? 1 : -1) : 0;
+    return ret ? (ret > 0LL ? 1 : -1) : 0;
 }
 
 #define PVV pair<vec2, vec2>
 
 bool is_intersect(const PVV& a, const PVV& b)
 {
-    vec2 u = a.second - a.first;
-    vec2 v = b.second - b.first;
-    if(u * v == 0LL) // parallel
+    auto L1_s = a.first, L1_e = a.second, L2_s = b.first, L2_e = b.second;
+    int L1_ccw = ccw(L1_s, L1_e, L2_s) * ccw(L1_s, L1_e, L2_e);
+    int L2_ccw = ccw(L2_s, L2_e, L1_s) * ccw(L2_s, L2_e, L1_e);
+    if(L1_ccw == 0 && L2_ccw == 0) // parallel
     {
-        if((a.first - b.second) * u != 0LL) return false; // parallel but not in line
+        if(L1_e < L1_s) swap(L1_s, L1_e);
+        if(L2_e < L2_s) swap(L2_s, L2_e);
 
-        vector<pair<vec2, int>> points({make_pair(a.first, 0), make_pair(a.second, 0), make_pair(b.first, 1), make_pair(b.second, 1)});
-        sort(points.begin(), points.end());
-
-        if(points[1].first == points[2].first)
-            return true;
-        else if(points[0].second == points[1].second)
-            return false;
-        else
-            return true;
+        return !(L1_e < L2_s || L2_e < L1_s);
     }
-
-    return ccw(a.first, a.second, b.first) * ccw(a.first, a.second, b.second) <= 0LL &&
-        ccw(b.first, b.second, a.first) * ccw(b.first, b.second, a.second) <= 0LL;
+    
+    return L1_ccw <= 0 && L2_ccw <= 0;
 }
 
 int main(void)
