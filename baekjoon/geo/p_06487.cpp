@@ -17,8 +17,6 @@ struct vec2
     vec2(double x, double y) :x(x), y(y) {}
     vec2 operator+(const vec2& v) const { return vec2(x + v.x, y + v.y); }
     vec2 operator-(const vec2& v) const { return vec2(x - v.x, y - v.y); }
-    bool operator==(const vec2& v) const { return eq(x, v.x) && eq(y, v.y); }
-    bool operator<(const vec2& v) const { return this->y < v.y || (eq(this->y, v.y) && this->x < v.x); }
     double operator*(const vec2& v) const { return x * v.y - v.x * y; }
     vec2 operator*(double v) const { return vec2(x * v, y * v); }
 };
@@ -37,24 +35,7 @@ int find_intersect(const PVV& a, const PVV& b, vec2& out)
     auto L1_dir = L1_e - L1_s, L2_dir = L2_e - L2_s;
 
     if(eq(L1_dir * L2_dir, 0.))  // parallel
-    {
-        if(!eq(ccw(L1_s, L1_e, L2_s), 0.))  // not in line
-            return NONE;
-
-        if(L1_e < L1_s) swap(L1_s, L1_e);
-        if(L2_e < L2_s) swap(L2_s, L2_e);
-
-        if(L1_e == L2_s) {
-            out = L1_e;
-            return POINT;
-        }
-        else if(L1_s == L2_e) {
-            out = L1_s;
-            return POINT;
-        }
-        else
-            return LINE;
-    }
+        return eq(ccw(L1_s, L1_e, L2_s), 0.) ? LINE : NONE;
     
     double p = ((L2_s - L1_s) * L2_dir) / (L1_dir * L2_dir);
     out = L1_s + (L1_dir * p);
